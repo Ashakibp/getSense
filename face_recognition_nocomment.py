@@ -1,6 +1,7 @@
 # Face Recognition
 # Importing the libraries
 from collections import deque
+from http.server import HTTPServer
 from multiprocessing.pool import ThreadPool
 
 
@@ -62,7 +63,6 @@ def predictImage(imageUrl):
     model = app.models.get('getsense')
     image = ClImage(filename=imageUrl)
     print(model.predict([image]))
-
 
 
 Thread(target=runCam(), args=()).start()
