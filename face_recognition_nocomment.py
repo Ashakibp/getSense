@@ -1,32 +1,68 @@
 # Face Recognition
-
 # Importing the libraries
+from collections import deque
+from multiprocessing.pool import ThreadPool
+
+
+
+
+from clarifai.rest import ClarifaiApp
+from clarifai.rest import Image as ClImage
+
+# add multiple images with concepts
+
+
 import cv2
-import threading
-
-
-
+from threading import Thread
+import time
+camera_type = 'local'
 # Loading the cascades
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+
 # Defining a function that will do the detections
-def detect(gray, frame):
-    faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-    for (x, y, w, h) in faces:
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+def detect(gray, frame, counter, modvar):
+    print(counter)
+    if counter % modvar == 0:
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
+            Thread(target=makeImage(frame,counter), args=()).start()
+
     return frame
 
+
+def makeImage(frame, counter):
+    img_name = "opencv_frame_{}.png".format(counter)
+    cv2.imwrite("./images/" + img_name, frame)
+    predictImage("./images/" + img_name)
+    print("{} written!".format(img_name))
+
 # Doing some Face Recognition with the webcam
-video_capture = cv2.VideoCapture(0)
-while True:
-    _, frame = video_capture.read()
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    canvas = detect(gray, frame)
-    cv2.imshow('Video', canvas)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+def runCam():
+    video_capture = cv2.VideoCapture(0)
+    modvar = 20
+    counter = 0
+    while True:
+        _, frame = video_capture.read()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        canvas = detect(gray, frame, counter, modvar)
+        cv2.imshow('Video', canvas)
+        counter+=1
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    video_capture.release()
+    cv2.destroyAllWindows()
+
+# generic routine to grab one frame from camera
+
+
+def predictImage(imageUrl):
+    app = ClarifaiApp(api_key='89ae1c6405b84e19bfa726118e491190')
+    model = app.models.get('getsense')
+    image = ClImage(filename=imageUrl)
+    print(model.predict([image]))
 
 
 
-video_capture.release()
-cv2.destroyAllWindows()
+Thread(target=runCam(), args=()).start()
