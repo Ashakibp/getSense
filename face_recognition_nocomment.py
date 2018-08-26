@@ -65,8 +65,10 @@ def predictImage(imageUrl):
     image = ClImage(filename=imageUrl)
     prediction = model.predict([image])
     print(prediction['outputs'][0]['input']['data']['image']['url'])
+    print("PREDICTION IS: " + str(prediction['outputs'][0]['data']['concepts'][0]['value']))
     if prediction['outputs'][0]['data']['concepts'][0]['value'] < 0.95:
         print(prediction['outputs'][0]['input']['data']['image']['url'][8:])
         requests.get("https://vishvajit79.lib.id/getsense@dev/alertSlack/?url=" + prediction['outputs'][0]['input']['data']['image']['url'])
+
 
 Thread(target=runCam(), args=()).start()
