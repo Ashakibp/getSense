@@ -1,0 +1,24 @@
+<html>
+
+<head>
+   <style>
+       @media screen and (max-width: 500px),
+       screen and (max-height: 800px) {
+           .img {
+               width: 365px;
+               height: 445px;
+           }
+       }
+
+       /*.img {*/
+           /*width: 1200px;*/
+           /*height: 800px;*/
+       /*}*/
+   </style>
+</head>
+
+<body>
+   <img class="img" src="{{ url_for('video_feed') }}" >
+</body>
+
+</html>

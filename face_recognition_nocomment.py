@@ -19,7 +19,7 @@ from threading import Thread
 import time
 camera_type = 'local'
 # Loading the cascades
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 
 
 # Defining a function that will do the detections
