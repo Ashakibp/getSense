@@ -9,7 +9,8 @@ from multiprocessing.pool import ThreadPool
 
 from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
-
+import requests
+import json
 # add multiple images with concepts
 
 
@@ -62,7 +63,10 @@ def predictImage(imageUrl):
     app = ClarifaiApp(api_key='89ae1c6405b84e19bfa726118e491190')
     model = app.models.get('getsense')
     image = ClImage(filename=imageUrl)
-    print(model.predict([image]))
-
+    prediction = model.predict([image])
+    print(prediction['outputs'][0]['input']['data']['image']['url'])
+    if prediction['outputs'][0]['data']['concepts'][0]['value'] < 0.95:
+        print(prediction['outputs'][0]['input']['data']['image']['url'][8:])
+        requests.get("https://vishvajit79.lib.id/getsense@dev/alertSlack/?url=" + prediction['outputs'][0]['input']['data']['image']['url'])
 
 Thread(target=runCam(), args=()).start()
