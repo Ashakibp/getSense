@@ -51,7 +51,7 @@ def updateURL():
     config = json.load(open('../firebaseConfig.json'))
     firebase = pyrebase.initialize_app(config)
     db = firebase.database()
-    db.child("livestream").update({"djfklejdsjodjsfi":{"livestreamURL": x[:len(x)-1]}})
+    db.child("pistream").update({"djfklejdsjodjsfi":{"pistreamURL": x[:len(x)-1]}})
 
 updateURL()
 
